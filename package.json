@@ -1,0 +1,22 @@
+{
+  "name": "encoding-helper",
+  "version": "1.0.0",
+  "description": "Utility functions for BankingProduct",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anhlh-edsolabs/encoding-helper.git"
+  },
+  "author": "Le Hoang Anh",
+  "license": "MIT",
+  "prettier": {
+    "tabWidth": 4,
+    "printWidth": 80,
+    "parser": "meriyah",
+    "singleQuote": false,
+    "bracketSpacing": true
+  },
+  "dependencies": {
+    "ethers": "5.7.2"
+  }
+}
