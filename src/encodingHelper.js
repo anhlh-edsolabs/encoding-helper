@@ -6,7 +6,7 @@ function encodeName(name) {
     return ethers.utils.hexlify(
         ethers.utils
             .stripZeros(ethers.utils.formatBytes32String(name))
-            .slice(0, 12)
+            .slice(0, 10)
     );
 }
 
@@ -19,11 +19,11 @@ function last10(id) {
     return ethers.utils.hexlify(byteArrayId.slice(22, 32));
 }
 
-function getId(name, token, product) {
+function getId(name, index, token, product) {
     return ethers.BigNumber.from(
         ethers.utils.solidityPack(
-            ["bytes12", "bytes10", "bytes10"],
-            [encodeName(name), first10(token), first10(product)]
+            ["bytes10", "uint16", "bytes10", "bytes10"],
+            [encodeName(name), index, first10(token), first10(product)]
         )
     );
 }
@@ -31,12 +31,13 @@ function getId(name, token, product) {
 function decodeId(id) {
     let byteArrayId = ethers.utils.stripZeros(id);
     let name = ethers.utils
-        .toUtf8String(ethers.utils.hexlify(byteArrayId.slice(0, 12)))
+        .toUtf8String(ethers.utils.hexlify(byteArrayId.slice(0, 10)))
         .replace(/(\x00)/g, "");
+    let index = ethers.utils.toUtf8String(byteArrayId.slice(10, 12));
     let token = ethers.utils.hexlify(byteArrayId.slice(12, 22));
     let product = ethers.utils.hexlify(byteArrayId.slice(22, 32));
 
-    return [name, token, product];
+    return [name, index, token, product];
 }
 
 function keccak256(input) {
