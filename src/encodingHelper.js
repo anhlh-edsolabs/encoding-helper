@@ -33,7 +33,7 @@ function decodeId(id) {
     let name = ethers.utils
         .toUtf8String(ethers.utils.hexlify(byteArrayId.slice(0, 10)))
         .replace(/(\x00)/g, "");
-    let index = ethers.utils.toUtf8String(byteArrayId.slice(10, 12));
+    let index = parseInt(ethers.utils.hexlify(byteArrayId.slice(10, 12)));
     let token = ethers.utils.hexlify(byteArrayId.slice(12, 22));
     let product = ethers.utils.hexlify(byteArrayId.slice(22, 32));
 
