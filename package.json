@@ -1,6 +1,6 @@
 {
   "name": "encoding-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility functions for BankingProduct",
   "main": "index.js",
   "repository": {
