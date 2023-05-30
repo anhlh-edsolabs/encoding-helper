@@ -1,6 +1,6 @@
-# Encoding Helper
+# Encoding & Hashing Helper
 
-Utility functions for BankingProduct smart contract
+Utility libraries for Solidity smart contract
 
 ---
 
@@ -145,7 +145,7 @@ encodingHelper.stringToBytes('Lorem Ipsum dolor sit amet. Consectetur adispicing
 
 #### 9. `hexToString(hexString: string): string`
 
-Convert a `hexString` value into UTF-8 string and remove any `null` characters from the result.
+Convert a `hexString` input into UTF-8 string value and remove any `null` characters (`\x00`) from the result.
 
 - Example:
 

@@ -1,7 +1,7 @@
 {
   "name": "encoding-helper",
-  "version": "1.1.1",
-  "description": "Utility functions for BankingProduct",
+  "version": "1.1.0",
+  "description": "Utility libraries for Solidity smart contract",
   "main": "index.js",
   "repository": {
     "type": "git",
