@@ -12,18 +12,18 @@ Utility libraries for Solidity smart contract
 yarn add -D encoding-helper
 ```
 
-### 2. Import the library in your script
+### 2. Import the libraries in your script
 
-- Import the entire library:
+- Import the libraries:
 
 ```Javascript
-const encodingHelper = require('encoding-helper');
+const { encodingHelper, hashingHelper } = require('encoding-helper');
 ```
 
 - Import only the necessary functions, example:
 
 ```Javascript
-const { encodeName, decodeId, keccak256 } = require('encoding-helper');
+const { toBytes10Name, decodeId, keccak256 } = require('encoding-helper');
 ```
 
 ---
