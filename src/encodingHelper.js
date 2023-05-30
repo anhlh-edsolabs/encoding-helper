@@ -3,7 +3,7 @@ const { BigNumber, utils } = require("ethers");
 const ADDRESS_0 = "0x0000000000000000000000000000000000000000";
 
 function toBytes10Name(name) {
-    // Take only the first 10 elements of the Uint8Array 
+    // Take only the first 10 elements of the Uint8Array
     // returned by the `utils.arrayify()`.
     return stringToBytes(name, 10);
 }
@@ -46,9 +46,14 @@ function pack(types, values) {
 }
 
 function stringToBytes(input, length) {
-    return utils.hexlify(
-        utils.arrayify(pack(["string"], [input])).slice(0, length)
-    );
+    let bytesValue = utils.toUtf8Bytes(input);
+
+    bytesValue =
+        bytesValue.length < length
+            ? utils.arrayify(utils.formatBytes32String(input)).slice(0, length)
+            : utils.arrayify(pack(["string"], [input])).slice(0, length);
+    
+    return utils.hexlify(bytesValue);
 }
 
 function hexToString(hexString) {
