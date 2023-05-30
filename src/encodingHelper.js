@@ -1,55 +1,69 @@
-const ethers = require("ethers");
+const { BigNumber, utils } = require("ethers");
 
 const ADDRESS_0 = "0x0000000000000000000000000000000000000000";
 
-function encodeName(name) {
-    return ethers.utils.hexlify(
-        ethers.utils
-            .stripZeros(ethers.utils.formatBytes32String(name))
-            .slice(0, 10)
-    );
+function toBytes10Name(name) {
+    // Take only the first 10 elements of the Uint8Array 
+    // returned by the `utils.arrayify()`.
+    return stringToBytes(name, 10);
 }
 
 function first10(address) {
-    return ethers.utils.hexlify(ethers.utils.stripZeros(address).slice(0, 10));
+    return utils.hexlify(utils.arrayify(address).slice(0, 10));
 }
 
 function last10(id) {
-    let byteArrayId = ethers.utils.stripZeros(id);
-    return ethers.utils.hexlify(byteArrayId.slice(22, 32));
+    let byteArrayId = utils.arrayify(id);
+    return utils.hexlify(byteArrayId.slice(22, 32));
 }
 
 function getId(name, index, token, product) {
-    return ethers.BigNumber.from(
-        ethers.utils.solidityPack(
+    return BigNumber.from(
+        utils.solidityPack(
             ["bytes10", "uint16", "bytes10", "bytes10"],
-            [encodeName(name), index, first10(token), first10(product)]
+            [toBytes10Name(name), index, first10(token), first10(product)]
         )
     );
 }
 
 function decodeId(id) {
-    let byteArrayId = ethers.utils.stripZeros(id);
-    let name = ethers.utils
-        .toUtf8String(ethers.utils.hexlify(byteArrayId.slice(0, 10)))
-        .replace(/(\x00)/g, "");
-    let index = parseInt(ethers.utils.hexlify(byteArrayId.slice(10, 12)));
-    let token = ethers.utils.hexlify(byteArrayId.slice(12, 22));
-    let product = ethers.utils.hexlify(byteArrayId.slice(22, 32));
+    // convert the BigNumber id into and Uint8Array and zero pad it to compensate any missing length of bytes32
+    let bytesArrayId = utils.zeroPad(utils.arrayify(id), 32);
+    let name = hexToString(utils.hexlify(bytesArrayId.slice(0, 10)));
+    let index = parseInt(utils.hexlify(bytesArrayId.slice(10, 12)));
+    let token = utils.hexlify(bytesArrayId.slice(12, 22));
+    let product = utils.hexlify(bytesArrayId.slice(22, 32));
 
     return [name, index, token, product];
 }
 
 function keccak256(input) {
-    return ethers.utils.keccak256(ethers.utils.toUtf8Bytes(input));
+    return utils.keccak256(utils.toUtf8Bytes(input));
+}
+
+function pack(types, values) {
+    return utils.solidityPack(types, values);
+}
+
+function stringToBytes(input, length) {
+    return utils.hexlify(
+        utils.arrayify(pack(["string"], [input])).slice(0, length)
+    );
+}
+
+function hexToString(hexString) {
+    return utils.toUtf8String(hexString).replace(/(\x00)/g, "");
 }
 
 module.exports = {
-    encodeName,
+    toBytes10Name,
     first10,
     last10,
     getId,
     decodeId,
     keccak256,
+    pack,
+    stringToBytes,
+    hexToString,
     ADDRESS_0,
 };
