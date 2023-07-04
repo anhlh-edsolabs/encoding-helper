@@ -35,8 +35,10 @@ function recoverOriginalValues(bytes32HexValue) {
 }
 
 module.exports = {
-    toRoleHash,
-    toBytes32Key,
-    toBytes32Value,
-    recoverOriginalValues,
+    hashingHelper: {
+        toRoleHash,
+        toBytes32Key,
+        toBytes32Value,
+        recoverOriginalValues,
+    },
 };

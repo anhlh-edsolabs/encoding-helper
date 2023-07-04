@@ -27,12 +27,12 @@ function getId(name, index, token, product) {
 }
 
 function decodeId(id) {
-    // convert the BigNumber id into and Uint8Array and zero pad it to compensate any missing length of bytes32
-    let bytesArrayId = utils.zeroPad(utils.arrayify(id), 32);
-    let name = hexToString(utils.hexlify(bytesArrayId.slice(0, 10)));
-    let index = parseInt(utils.hexlify(bytesArrayId.slice(10, 12)));
-    let token = utils.hexlify(bytesArrayId.slice(12, 22));
-    let product = utils.hexlify(bytesArrayId.slice(22, 32));
+    // convert the BigNumber id into an Uint8Array and zero pad it to compensate any missing length of bytes32
+    let _id = utils.zeroPad(utils.arrayify(BigNumber.from(id)), 32);
+    let name = hexToString(utils.hexlify(_id.slice(0, 10)));
+    let index = parseInt(utils.hexlify(_id.slice(10, 12)));
+    let token = utils.hexlify(_id.slice(12, 22));
+    let product = utils.hexlify(_id.slice(22, 32));
 
     return [name, index, token, product];
 }
@@ -52,7 +52,7 @@ function stringToBytes(input, length) {
         bytesValue.length < length
             ? utils.arrayify(utils.formatBytes32String(input)).slice(0, length)
             : utils.arrayify(pack(["string"], [input])).slice(0, length);
-    
+
     return utils.hexlify(bytesValue);
 }
 
@@ -60,15 +60,48 @@ function hexToString(hexString) {
     return utils.toUtf8String(hexString).replace(/(\x00)/g, "");
 }
 
+function encodePayload(name, index, token, product, account) {
+    let id = utils.zeroPad(getId(name, index, token, product), 32);
+    let targetToken = utils.zeroPad(token, 32);
+    let targetproduct = utils.zeroPad(product, 32);
+    let recipient = utils.zeroPad(account, 32);
+
+    return pack(
+        ["bytes32", "bytes32", "bytes32", "bytes32"],
+        [id, targetToken, targetproduct, recipient]
+    );
+}
+
+function decodePayload(payloadHex) {
+    let _payload = utils.arrayify(payloadHex);
+
+    let id = utils.hexDataSlice(_payload, 0, 32);
+    let targetToken = utils.getAddress(
+        utils.hexStripZeros(utils.hexDataSlice(_payload, 32, 64))
+    );
+    let targetProduct = utils.getAddress(
+        utils.hexStripZeros(utils.hexDataSlice(_payload, 64, 96))
+    );
+    let recipient = utils.getAddress(
+        utils.hexStripZeros(utils.hexDataSlice(_payload, 96, 128))
+    );
+
+    return [decodeId(id), id, targetToken, targetProduct, recipient];
+}
+
 module.exports = {
-    toBytes10Name,
-    first10,
-    last10,
-    getId,
-    decodeId,
-    keccak256,
-    pack,
-    stringToBytes,
-    hexToString,
-    ADDRESS_0,
+    encodingHelper: {
+        toBytes10Name,
+        first10,
+        last10,
+        getId,
+        decodeId,
+        keccak256,
+        pack,
+        stringToBytes,
+        hexToString,
+        encodePayload,
+        decodePayload,
+        ADDRESS_0,
+    },
 };
