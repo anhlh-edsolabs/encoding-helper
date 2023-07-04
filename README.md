@@ -14,16 +14,8 @@ yarn add -D encoding-helper
 
 ### 2. Import the libraries in your script
 
-- Import the libraries:
-
 ```Javascript
 const { encodingHelper, hashingHelper } = require('encoding-helper');
-```
-
-- Import only the necessary functions, example:
-
-```Javascript
-const { toBytes10Name, decodeId, keccak256 } = require('encoding-helper');
 ```
 
 ---
@@ -87,7 +79,7 @@ encodingHelper.last10(id);
 ==> '0x6846cef88276d453e38b'
 ```
 
-#### 5. `decodeId(id: BigNumber): string[]`
+#### 5. `decodeId(id: BigNumber | string): string[]`
 
 Recover the information used to generate the `id`.
 
@@ -100,6 +92,20 @@ let id = encodingHelper.getId('Lorem', 65535,'0xDEF0e171272f6f906163a2ab4cd82a3f
         _isBigNumber: true
     }
 ==> '34572686050035833475315598151429145236062344499814420574865813453149958300555'
+
+encodingHelper.decodeId('0x4c6f72656d0000000000ffffdef0e171272f6f9061636846cef88276d453e38b');
+==> [
+        'Lorem', 65535,
+        '0xdef0e171272f6f906163',
+        '0x6846cef88276d453e38b'
+    ]
+
+encodingHelper.decodeId('34572686050035833475315598151429145236062344499814420574865813453149958300555');
+==> [
+        'Lorem', 65535,
+        '0xdef0e171272f6f906163',
+        '0x6846cef88276d453e38b'
+    ]
 
 encodingHelper.decodeId(id);
 ==> [
@@ -155,6 +161,43 @@ encodingHelper.hexToString('0x4c6f72656d2049707375');
 
 encodingHelper.hexToString('0x4c6f72656d0000000000');
 ==> 'Lorem'
+```
+
+#### 10. `encodePayload(name: string, index: uint16, token: address, product: address, account: address): string`
+
+Encode a payload data that consists of `name`, `index`, `token`, `product`, `account` into a hex string
+
+- `name`: product name
+- `index`: account index
+- `token`: target token address
+- `product`: target product address
+- `account`: recipient
+
+- Example:
+
+```Javascript
+encodingHelper.encodePayload('Lorem', 65535,'0xDEF0e171272f6f906163a2ab4cd82a3fF85a3972','0x6846ceF88276D453e38B92F4BFe70D29643571B8', '0xB34C74d889177ec905FEB41791936BCce1d7A5df')
+==> '0x4c6f72656d00000000000000def0e171272f6f9061636846cef88276d453e38b000000000000000000000000def0e171272f6f906163a2ab4cd82a3ff85a39720000000000000000000000006846cef88276d453e38b92f4bfe70d29643571b8000000000000000000000000b34c74d889177ec905feb41791936bcce1d7a5df'
+```
+
+#### 11. `decodePayload(payloadHex): (string | (string | number)[])[]`
+
+Decode a payload hex string to its original values.
+
+- Example:
+
+```Javascript
+let encodedPayload = encodingHelper.encodePayload('Lorem', 0, '0xDEF0e171272f6f906163a2ab4cd82a3fF85a3972', '0x6846ceF88276D453e38B92F4BFe70D29643571B8', '0xB34C74d889177ec905FEB41791936BCce1d7A5df')
+==> '0x4c6f72656d00000000000000def0e171272f6f9061636846cef88276d453e38b000000000000000000000000def0e171272f6f906163a2ab4cd82a3ff85a39720000000000000000000000006846cef88276d453e38b92f4bfe70d29643571b8000000000000000000000000b34c74d889177ec905feb41791936bcce1d7a5df'
+
+encodingHelper.decodePayload(encodedPayload)
+==> [
+        [ 'Lorem', 0, '0xdef0e171272f6f906163', '0x6846cef88276d453e38b' ],
+        '0x4c6f72656d00000000000000def0e171272f6f9061636846cef88276d453e38b',
+        '0xDEF0e171272f6f906163a2ab4cd82a3fF85a3972',
+        '0x6846ceF88276D453e38B92F4BFe70D29643571B8',
+        '0xB34C74d889177ec905FEB41791936BCce1d7A5df'
+    ]
 ```
 
 ---
