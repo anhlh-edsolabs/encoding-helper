@@ -38,7 +38,15 @@ function decodeId(id) {
 }
 
 function keccak256(input) {
-    return utils.keccak256(utils.toUtf8Bytes(input));
+    if(typeof(input) === "string") {
+        if (input.match(/^-?0x[0-9a-f]+$/i)) {
+            return utils.keccak256(input);
+        } else {
+            return utils.keccak256(utils.toUtf8Bytes(input));
+        }
+    } else {
+        return utils.keccak256(input);
+    }
 }
 
 function pack(types, values) {
