@@ -1,6 +1,6 @@
 {
   "name": "encoding-helper",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Utility libraries for Solidity smart contract",
   "main": "index.js",
   "repository": {
