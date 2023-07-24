@@ -258,3 +258,19 @@ hashingHelper.recoverOriginalValues('0x4c6f72656d497073756dffffdef0e171272f6f906
         '0xDEF0e171272f6f906163a2ab4cd82a3fF85a3972' 
     ]
 ```
+
+---
+
+### **B. TxUtils**
+
+#### 1. `getRevertReason(provider: Provider | string, txnHash: string): string`
+
+Get the revert reason from a failed transaction by the provided `txnHash`.
+**Note:** `provider` can be a `Provider` object or an `RPC url` string
+
+- Example:
+
+```Javascript
+await txUtils.getRevertReason(provider, '0x7e9e75da5aed836d34d961d61d66b3108115c395cff03aa058fd794e800ba68d')
+==> Failed to submit transaction: cannot estimate transaction: AccessControl: account 0xdec0da618b4fc8ff14028a5e27ca7e6a6d6b68d7 is missing role 0x0000000000000000000000000000000000000000000000000000000000000000.
+```
