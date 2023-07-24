@@ -261,7 +261,7 @@ hashingHelper.recoverOriginalValues('0x4c6f72656d497073756dffffdef0e171272f6f906
 
 ---
 
-### **B. TxUtils**
+### **C. TxUtils**
 
 #### 1. `getRevertReason(provider: Provider | string, txnHash: string): string`
 
