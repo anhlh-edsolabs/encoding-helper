@@ -38,7 +38,7 @@ function decodeId(id) {
 }
 
 function keccak256(input) {
-    if(typeof(input) === "string") {
+    if (typeof input === "string") {
         if (input.match(/^-?0x[0-9a-f]+$/i)) {
             return utils.keccak256(input);
         } else {
@@ -84,14 +84,17 @@ function decodePayload(payloadHex) {
     let _payload = utils.arrayify(payloadHex);
 
     let id = utils.hexDataSlice(_payload, 0, 32);
-    let targetToken = utils.getAddress(
-        utils.hexStripZeros(utils.hexDataSlice(_payload, 32, 64))
+    let targetToken = utils.defaultAbiCoder.decode(
+        ["address"],
+        utils.hexDataSlice(_payload, 32, 64)
     );
-    let targetProduct = utils.getAddress(
-        utils.hexStripZeros(utils.hexDataSlice(_payload, 64, 96))
+    let targetProduct = utils.defaultAbiCoder.decode(
+        ["address"],
+        utils.hexDataSlice(_payload, 64, 96)
     );
-    let recipient = utils.getAddress(
-        utils.hexStripZeros(utils.hexDataSlice(_payload, 96, 128))
+    let recipient = utils.defaultAbiCoder.decode(
+        ["address"],
+        utils.hexDataSlice(_payload, 96, 128)
     );
 
     return [decodeId(id), id, targetToken, targetProduct, recipient];
