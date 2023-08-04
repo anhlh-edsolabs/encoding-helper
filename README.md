@@ -15,7 +15,7 @@ yarn add -D encoding-helper
 ### 2. Import the libraries in your script
 
 ```Javascript
-const { encodingHelper, hashingHelper } = require('encoding-helper');
+const { encodingHelper, hashingHelper, txUtils } = require('encoding-helper');
 ```
 
 ---
@@ -273,4 +273,15 @@ Get the revert reason from a failed transaction by the provided `txnHash`.
 ```Javascript
 await txUtils.getRevertReason(provider, '0x7e9e75da5aed836d34d961d61d66b3108115c395cff03aa058fd794e800ba68d')
 ==> Failed to submit transaction: cannot estimate transaction: AccessControl: account 0xdec0da618b4fc8ff14028a5e27ca7e6a6d6b68d7 is missing role 0x0000000000000000000000000000000000000000000000000000000000000000.
+```
+
+#### 2. `getImplementationAddress(provider: Provider, proxyAddress: string)`
+
+Get the implementation address from a proxy contract with `proxyAddress`
+
+- Example:
+
+```Javascript
+> await txUtils.getImplementationAddress(provider, '0xc4999A3631c017C45B5Ff3363eda6e8B9d81208E')
+==> '0xa2BE51DBc0C901b75C7AD6a96a0BF66947ba20ba'
 ```

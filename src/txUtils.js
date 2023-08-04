@@ -1,6 +1,14 @@
 const { ethers } = require("ethers");
 const { log } = require("console");
 
+/** Implementation Slot is calculated as follow: 
+ * IMPLEMENTATION_SLOT = BigNumber.from(utils.keccak256(Buffer.from('eip1967.proxy.implementation'))).sub(1).toHexString()
+ * 
+ * Output value: '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc'
+ * */ 
+const IMPLEMENTATION_SLOT =
+	"0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+
 async function getRevertReason(provider, txnHash) {
     let _provider;
     if (
@@ -27,4 +35,9 @@ async function getRevertReason(provider, txnHash) {
     }
 }
 
-module.exports = { txUtils: { getRevertReason } };
+async function getImplementationAddress(provider, proxyAddress) {
+    const impl = await provider.getStorageAt(proxyAddress, IMPLEMENTATION_SLOT);
+    return utils.defaultAbiCoder.decode(["address"], impl)[0];
+}
+
+module.exports = { txUtils: { getRevertReason, getImplementationAddress } };
