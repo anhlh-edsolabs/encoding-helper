@@ -37,7 +37,7 @@ async function getRevertReason(provider, txnHash) {
 
 async function getImplementationAddress(provider, proxyAddress) {
     const impl = await provider.getStorageAt(proxyAddress, IMPLEMENTATION_SLOT);
-    return utils.defaultAbiCoder.decode(["address"], impl)[0];
+    return ethers.utils.defaultAbiCoder.decode(["address"], impl)[0];
 }
 
 module.exports = { txUtils: { getRevertReason, getImplementationAddress } };
