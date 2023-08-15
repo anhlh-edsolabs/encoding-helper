@@ -1,5 +1,4 @@
 const { ethers } = require("ethers");
-const { log } = require("console");
 
 /** Implementation Slot is calculated as follow: 
  * IMPLEMENTATION_SLOT = BigNumber.from(utils.keccak256(Buffer.from('eip1967.proxy.implementation'))).sub(1).toHexString()
@@ -26,13 +25,16 @@ async function getRevertReason(provider, txnHash) {
     }
 
     let txn = await _provider.getTransaction(txnHash);
+    let message = "";
 
     try {
         let result = await _provider.call(txn, txn.blockNumber);
-        log(result);
+        message = "No revert reason. Result: " + result;
     } catch (err) {
-        log(JSON.parse(err.error.body).error.message);
+        message = JSON.parse(err.error.body).error.message;
     }
+
+    return message;
 }
 
 async function getImplementationAddress(provider, proxyAddress) {
