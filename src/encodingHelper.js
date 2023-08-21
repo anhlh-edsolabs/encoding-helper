@@ -68,6 +68,7 @@ function hexToString(hexString) {
     return utils.toUtf8String(hexString).replace(/(\x00)/g, "");
 }
 
+/** @notice Obsoleted */
 function encodePayload(name, index, token, product, account) {
     let id = utils.zeroPad(getId(name, index, token, product), 32);
     let targetToken = utils.zeroPad(token, 32);
@@ -80,6 +81,7 @@ function encodePayload(name, index, token, product, account) {
     );
 }
 
+/** @notice Obsoleted */
 function decodePayload(payloadHex) {
     let _payload = utils.arrayify(payloadHex);
 
@@ -100,6 +102,48 @@ function decodePayload(payloadHex) {
     return [decodeId(id), id, targetToken, targetProduct, recipient];
 }
 
+function encodeBankPayload(name, index, token, product, account) {
+    let id = utils.zeroPad(getId(name, index, token, product), 32);
+
+    return utils.defaultAbiCoder.encode(
+        ["bytes32", "address", "address", "address"],
+        [id, token, product, account]
+    );
+}
+
+function decodeBankPayload(payloadHex) {
+    let _payloadArray = utils.defaultAbiCoder.decode(
+        ["bytes32", "address", "address", "address"],
+        payloadHex
+    );
+
+    return _spreadPayloadData(_payloadArray);
+}
+
+function encodeCryptoPayload(name, index, token, product, autoswap = false) {
+    let id = utils.zeroPad(getId(name, index, token, product), 32);
+
+    return utils.defaultAbiCoder.encode(
+        ["bytes32", "address", "address", "bool"],
+        [id, token, product, autoswap]
+    );
+}
+
+function decodeCryptoPayload(payloadHex) {
+    let _payloadArray = utils.defaultAbiCoder.decode(
+        ["bytes32", "address", "address", "bool"],
+        payloadHex
+    );
+
+    return _spreadPayloadData(_payloadArray);
+}
+
+function _spreadPayloadData(decodedPayload) {
+    let id = decodedPayload[0];
+
+    return [decodeId(id), ...decodedPayload];
+}
+
 module.exports = {
     encodingHelper: {
         toBytes10Name,
@@ -113,6 +157,10 @@ module.exports = {
         hexToString,
         encodePayload,
         decodePayload,
+        encodeBankPayload,
+        decodeBankPayload,
+        encodeCryptoPayload,
+        decodeCryptoPayload,
         ADDRESS_0,
     },
 };
