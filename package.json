@@ -2,13 +2,16 @@
   "name": "encoding-helper",
   "version": "1.2.10",
   "description": "Utility libraries for Solidity smart contract",
+  "author": "Le Hoang Anh",
+  "license": "MIT",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/anhlh-edsolabs/encoding-helper.git"
   },
-  "author": "Le Hoang Anh",
-  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
   "prettier": {
     "tabWidth": 4,
     "printWidth": 80,
@@ -20,5 +23,8 @@
     "ethers": "5.7.2",
     "zksync-web3": "^0.14.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "jest": "^29.7.0"
+  }
 }

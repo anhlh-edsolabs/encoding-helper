@@ -37,6 +37,54 @@ function decodeId(id) {
     return [name, index, token, product];
 }
 
+function getProductId(name, token, product) {
+    const encodedName = utils.toUtf8Bytes(name);
+
+    const truncatedName =
+        encodedName.length <= 10
+            ? toBytes10Name(name)
+            : utils.hexDataSlice(keccak256(encodedName), 0, 10);
+
+    return utils.solidityPack(
+        ["bytes10", "uint16", "bytes10", "bytes10"],
+        [truncatedName, 0, first10(token), first10(product)]
+    );
+}
+
+function verifyProductId(id, name, token, product) {
+    let _id = utils.arrayify(id);
+    let faults = 0;
+    let nameBytes10 = utils.hexlify(_id.slice(0, 10));
+    try {
+        faults = hexToString(nameBytes10) != name ? (faults += 1) : faults;
+    } catch (err) {
+        // faults += 1;
+        const encodedName = utils.hexDataSlice(
+            keccak256(utils.toUtf8Bytes(name)),
+            0,
+            10
+        );
+        faults = nameBytes10 != encodedName ? (faults += 1) : faults;
+    }
+    if (!utils.isAddress(token)) {
+        throw new Error("Invalid token address");
+    }
+    if (!utils.isAddress(product)) {
+        throw new Error("Invalid product address");
+    }
+    faults =
+        first10(token) != utils.hexlify(_id.slice(12, 22))
+            ? (faults += 1)
+            : faults;
+
+    faults =
+        first10(product) != utils.hexlify(_id.slice(22, 32))
+            ? (faults += 1)
+            : faults;
+
+    return faults == 0;
+}
+
 function keccak256(input) {
     if (typeof input === "string") {
         if (input.match(/^-?0x[0-9a-f]+$/i)) {
@@ -151,6 +199,8 @@ module.exports = {
         last10,
         getId,
         decodeId,
+        getProductId,
+        verifyProductId,
         keccak256,
         pack,
         stringToBytes,
