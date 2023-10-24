@@ -1,6 +1,6 @@
 {
   "name": "encoding-helper",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "Utility libraries for Solidity smart contract",
   "author": "Le Hoang Anh",
   "license": "MIT",
