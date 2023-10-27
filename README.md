@@ -178,7 +178,23 @@ hashingHelper.pack(["address", "string"], ['0xDEF0e171272f6f906163a2ab4cd82a3fF8
 ==> '0xdef0e171272f6f906163a2ab4cd82a3ff85a39724c6f72656d497073756d'
 ```
 
-#### 10. `stringToBytes(input: string, length: uint): string`
+#### 10. `stringToBytes10orHash(input: string): string`
+
+Convert the UTF-8 `input` string into a 10-bytes hex string. If the `input` string is lesser than or equal to 10 characters in length, the `output` is the direct hex-encoding of the `input`. If the `input` has more than 10 characters, it is hashed using `keccak256` and take the first 10 bytes.
+
+- Example
+
+```Javascript
+// Input <= 10 characters
+encodingHelper.stringToBytes10orHash('LoremIpsum')
+==> '0x4c6f72656d497073756d'
+
+// Input > 10 characters
+encodingHelper.stringToBytes10orHash('LoremIpsumDolorsitAmet')
+==> '0x872b837047e81dd64a95'
+```
+
+#### 11. `stringToBytes(input: string, length: uint): string`
 
 Convert the UTF-8 `input` string into a hex string representation of a bytes value with specified `length`.
 The `length` must not exceed `input`'s length.
@@ -190,7 +206,7 @@ encodingHelper.stringToBytes('Lorem Ipsum dolor sit amet. Consectetur adispicing
 ==> '0x4c6f72656d2049707375'
 ```
 
-#### 11. `hexToString(hexString: string): string`
+#### 12. `hexToString(hexString: string): string`
 
 Convert a `hexString` input into UTF-8 string value and remove any `null` characters (`\x00`) from the result.
 
@@ -204,7 +220,7 @@ encodingHelper.hexToString('0x4c6f72656d0000000000');
 ==> 'Lorem'
 ```
 
-#### 12. `encodeCryptoPayload(name: string, index: uint16, token: address, product: address, autoswap: bool | false): string`
+#### 13. `encodeCryptoPayload(name: string, index: uint16, token: address, product: address, autoswap: bool | false): string`
 
 Encode a payload data that consists of `name`, `index`, `token`, `product`, `autoswap` into a hex string for Crypto currency deposit.
 
@@ -219,7 +235,7 @@ encodeCryptoPayload('LOREM', 10, '0x1CBDD079370932F90A19902bA12D20c5D3716833', '
 ==> '0x4c4f52454d0000000000000a1cbdd079370932f90a19625384874d83fccffe550000000000000000000000001cbdd079370932f90a19902ba12d20c5d3716833000000000000000000000000625384874d83fccffe55778f72b7c7f4dab1cdbd0000000000000000000000000000000000000000000000000000000000000001'
 ```
 
-#### 13. `decodeCryptoPayload(payloadHex: string): : (string | (string | number)[])[]`
+#### 14. `decodeCryptoPayload(payloadHex: string): : (string | (string | number)[])[]`
 
 Decode a payload hex string to its original values.
 
@@ -234,7 +250,7 @@ decodeCryptoPayload('0x4c4f52454d0000000000000a1cbdd079370932f90a19625384874d83f
     ]
 ```
 
-#### 14. `encodeBankPayload(name: string, index: uint16, token: address, product: address, account: address): string`
+#### 15. `encodeBankPayload(name: string, index: uint16, token: address, product: address, account: address): string`
 
 Encode a payload data that consists of `name`, `index`, `token`, `product`, `account` into a hex string
 
@@ -251,7 +267,7 @@ encodingHelper.encodeBankPayload('Lorem', 65535,'0xDEF0e171272f6f906163a2ab4cd82
 ==> '0x4c6f72656d0000000000ffffdef0e171272f6f9061636846cef88276d453e38b000000000000000000000000def0e171272f6f906163a2ab4cd82a3ff85a39720000000000000000000000006846cef88276d453e38b92f4bfe70d29643571b8000000000000000000000000b34c74d889177ec905feb41791936bcce1d7a5df'
 ```
 
-#### 15. `decodeBankPayload(payloadHex: string): (string | (string | number)[])[]`
+#### 16. `decodeBankPayload(payloadHex: string): (string | (string | number)[])[]`
 
 Decode a payload hex string to its original values.
 

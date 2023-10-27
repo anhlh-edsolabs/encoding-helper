@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { BigNumber } = require("ethers");
+const { utils, constants, BigNumber } = require("ethers");
 const { encodingHelper } = require("../");
 
 describe("Encoding Helper", () => {
@@ -69,6 +69,126 @@ describe("Encoding Helper", () => {
             const result = encodingHelper.getProductId(name, token, product);
             const expected =
                 "0x4a6f686e446f650000000000abcdef0123456789abcd0123456789abcdef0123";
+            expect(result).to.equal(expected);
+        });
+    });
+
+    describe("verifyProductId", () => {
+        it("should verify a valid product ID", () => {
+            const name = "JohnDoe";
+            const token = "0xabcdef0123456789abcdef0123456789abcdef01";
+            const product = "0x0123456789abcdef0123456789abcdef01234567";
+            const id = encodingHelper.getProductId(name, token, product);
+            expect(() =>
+                encodingHelper.verifyProductId(id, name, token, product)
+            ).to.not.throw();
+        });
+
+        it("should throw an error for an invalid name", () => {
+            const name = "JohnDoe";
+            const token = "0xabcdef0123456789abcdef0123456789abcdef01";
+            const product = "0x0123456789abcdef0123456789abcdef01234567";
+            const id = encodingHelper.getProductId(name, token, product);
+            const result = encodingHelper.verifyProductId(
+                id,
+                "JaneDoe",
+                token,
+                product
+            );
+            expect(result).to.be.false;
+        });
+
+        it("should throw an error for an invalid token address", () => {
+            const name = "JohnDoe";
+            const token = "0xabcdef0123456789abcdef0123456789abcdef01";
+            const product = "0x0123456789abcdef0123456789abcdef01234567";
+            const id = encodingHelper.getProductId(name, token, product);
+            expect(() =>
+                encodingHelper.verifyProductId(id, name, "invalid", product)
+            ).to.throw("Invalid token address");
+        });
+
+        it("should throw an error for an invalid product address", () => {
+            const name = "JohnDoe";
+            const token = "0xabcdef0123456789abcdef0123456789abcdef01";
+            const product = "0x0123456789abcdef0123456789abcdef01234567";
+            const id = encodingHelper.getProductId(name, token, product);
+            expect(() =>
+                encodingHelper.verifyProductId(id, name, token, "invalid")
+            ).to.throw("Invalid product address");
+        });
+
+        it("should return false for an invalid token ID", () => {
+            const name = "JohnDoe";
+            const token = "0xabcdef0123456789abcdef0123456789abcdef01";
+            const product = "0x0123456789abcdef0123456789abcdef01234567";
+            const id = encodingHelper.getProductId(name, token, product);
+
+            const invalidTokenAddress = encodingHelper.first10(
+                constants.AddressZero
+            );
+            const invalidId = utils.solidityPack(
+                ["bytes10", "uint16", "bytes10", "bytes10"],
+                [
+                    utils.hexDataSlice(id, 0, 10),
+                    0,
+                    invalidTokenAddress,
+                    utils.hexDataSlice(id, 22, 32),
+                ]
+            );
+            const result = encodingHelper.verifyProductId(
+                invalidId,
+                name,
+                token,
+                product
+            );
+            expect(result).to.be.false;
+        });
+
+        it("should return false for an invalid product ID", () => {
+            const name = "JohnDoe";
+            const token = "0xabcdef0123456789abcdef0123456789abcdef01";
+            const product = "0x0123456789abcdef0123456789abcdef01234567";
+            const id = encodingHelper.getProductId(name, token, product);
+            const invalidProductId = encodingHelper.first10(
+                constants.AddressZero
+            );
+            const invalidId = utils.solidityPack(
+                ["bytes10", "uint16", "bytes10", "bytes10"],
+                [
+                    utils.hexDataSlice(id, 0, 10),
+                    0,
+                    encodingHelper.first10(token),
+                    invalidProductId,
+                ]
+            );
+            const result = encodingHelper.verifyProductId(
+                invalidId,
+                name,
+                token,
+                product
+            );
+            expect(result).to.be.false;
+        });
+    });
+
+    describe("stringToBytes10orHash", () => {
+        it("should convert a short string to bytes10", () => {
+            const input = "JohnDoe";
+            const result = encodingHelper.stringToBytes10orHash(input);
+            const expected = "0x4a6f686e446f65000000";
+            expect(result).to.equal(expected);
+        });
+
+        it("should convert a long string to keccak256 hash", () => {
+            const input =
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.";
+            const result = encodingHelper.stringToBytes10orHash(input);
+            const expected = utils.hexDataSlice(
+                utils.keccak256(utils.toUtf8Bytes(input)),
+                0,
+                10
+            );
             expect(result).to.equal(expected);
         });
     });

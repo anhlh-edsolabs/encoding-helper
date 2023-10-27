@@ -38,12 +38,7 @@ function decodeId(id) {
 }
 
 function getProductId(name, token, product) {
-    const encodedName = utils.toUtf8Bytes(name);
-
-    const truncatedName =
-        encodedName.length <= 10
-            ? toBytes10Name(name)
-            : utils.hexDataSlice(keccak256(encodedName), 0, 10);
+    const truncatedName = stringToBytes10orHash(name);
 
     return utils.solidityPack(
         ["bytes10", "uint16", "bytes10", "bytes10"],
@@ -99,6 +94,14 @@ function keccak256(input) {
 
 function pack(types, values) {
     return utils.solidityPack(types, values);
+}
+
+function stringToBytes10orHash(input) {
+    const inputUtf8Bytes = utils.toUtf8Bytes(input);
+
+    return inputUtf8Bytes.length <= 10
+        ? toBytes10Name(input)
+        : utils.hexDataSlice(keccak256(inputUtf8Bytes), 0, 10);
 }
 
 function stringToBytes(input, length) {
@@ -201,6 +204,7 @@ module.exports = {
         decodeId,
         getProductId,
         verifyProductId,
+        stringToBytes10orHash,
         keccak256,
         pack,
         stringToBytes,
