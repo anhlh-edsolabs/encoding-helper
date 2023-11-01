@@ -21,7 +21,12 @@ function getId(name, index, token, product) {
     return BigNumber.from(
         utils.solidityPack(
             ["bytes10", "uint16", "bytes10", "bytes10"],
-            [toBytes10Name(name), index, first10(token), first10(product)]
+            [
+                stringToBytes10orHash(name),
+                index,
+                first10(token),
+                first10(product),
+            ]
         )
     );
 }
@@ -38,12 +43,16 @@ function decodeId(id) {
 }
 
 function getProductId(name, token, product) {
-    const truncatedName = stringToBytes10orHash(name);
+    const nameHashed = stringToBytes10orHash(name);
 
     return utils.solidityPack(
         ["bytes10", "uint16", "bytes10", "bytes10"],
-        [truncatedName, 0, first10(token), first10(product)]
+        [nameHashed, 0, first10(token), first10(product)]
     );
+}
+
+function getNameHashFromId(hexId) {
+    return utils.hexDataSlice(hexId, 0, 10);
 }
 
 function verifyProductId(id, name, token, product) {
@@ -203,6 +212,7 @@ module.exports = {
         getId,
         decodeId,
         getProductId,
+        getNameHashFromId,
         verifyProductId,
         stringToBytes10orHash,
         keccak256,
