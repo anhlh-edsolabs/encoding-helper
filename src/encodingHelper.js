@@ -34,7 +34,14 @@ function getId(name, index, token, product) {
 function decodeId(id) {
     // convert the BigNumber id into an Uint8Array and zero pad it to compensate any missing length of bytes32
     let _id = utils.zeroPad(utils.arrayify(BigNumber.from(id)), 32);
-    let name = hexToString(utils.hexlify(_id.slice(0, 10)));
+    let nameSlice = _id.slice(0, 10);
+
+    let name;
+    try {
+        name = hexToString(utils.hexlify(nameSlice));
+    } catch (err) {
+        name = utils.hexlify(nameSlice);
+    }
     let index = parseInt(utils.hexlify(_id.slice(10, 12)));
     let token = utils.hexlify(_id.slice(12, 22));
     let product = utils.hexlify(_id.slice(22, 32));
